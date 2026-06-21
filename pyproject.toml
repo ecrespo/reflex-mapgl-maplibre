@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reflex-mapgl-maplibre"
+version = "0.1.0"
+description = "Reflex wrapper for react-map-gl (maplibre endpoint) — interactive MapLibre GL JS maps in pure Python."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Ernesto Crespo", email = "ecrespo@gmail.com" }]
+keywords = [
+    "reflex",
+    "reflex-custom-components",
+    "maplibre",
+    "react-map-gl",
+    "map",
+    "gis",
+    "geospatial",
+    "webgl",
+]
+
+dependencies = [
+    "reflex>=0.9.0",
+]
+
+classifiers = ["Development Status :: 4 - Beta"]
+
+[project.urls]
+Homepage = "https://github.com/ecrespo/reflex-mapgl-maplibre"
+Source = "https://github.com/ecrespo/reflex-mapgl-maplibre"
+"Bug Tracker" = "https://github.com/ecrespo/reflex-mapgl-maplibre/issues"
+"Upstream (react-map-gl)" = "https://github.com/visgl/react-map-gl"
+
+[project.optional-dependencies]
+dev = ["build", "twine", "pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+where = ["custom_components"]
+
+[tool.setuptools.package-data]
+reflex_mapgl_maplibre = ["*.jsx"]
