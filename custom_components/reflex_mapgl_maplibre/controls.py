@@ -7,9 +7,13 @@ All controls accept a ``position`` prop:
 from __future__ import annotations
 
 import reflex as rx
-from reflex.vars import Var
 
 from .base import MapLibreComponent
+
+
+def _geolocate_spec(event: rx.Var[dict]) -> tuple[rx.Var]:
+    """Map ``onGeolocate`` → ``coords`` dict (event is a ``GeolocationPosition``)."""
+    return (event["coords"],)
 
 
 class NavigationControl(MapLibreComponent):
@@ -18,10 +22,10 @@ class NavigationControl(MapLibreComponent):
     tag = "NavigationControl"
     is_default = False
 
-    position: Var[str]
-    show_compass: Var[bool]
-    show_zoom: Var[bool]
-    visualize_pitch: Var[bool]
+    position: rx.Var[str]
+    show_compass: rx.Var[bool]
+    show_zoom: rx.Var[bool]
+    visualize_pitch: rx.Var[bool]
 
 
 class GeolocateControl(MapLibreComponent):
@@ -30,13 +34,13 @@ class GeolocateControl(MapLibreComponent):
     tag = "GeolocateControl"
     is_default = False
 
-    position: Var[str]
-    track_user_location: Var[bool]
-    show_user_location: Var[bool]
-    show_accuracy_circle: Var[bool]
-    position_options: Var[dict]
+    position: rx.Var[str]
+    track_user_location: rx.Var[bool]
+    show_user_location: rx.Var[bool]
+    show_accuracy_circle: rx.Var[bool]
+    position_options: rx.Var[dict]
 
-    on_geolocate: rx.EventHandler[rx.event.no_args_event_spec]
+    on_geolocate: rx.EventHandler[_geolocate_spec]
     on_error: rx.EventHandler[rx.event.no_args_event_spec]
 
 
@@ -46,7 +50,7 @@ class FullscreenControl(MapLibreComponent):
     tag = "FullscreenControl"
     is_default = False
 
-    position: Var[str]
+    position: rx.Var[str]
 
 
 class ScaleControl(MapLibreComponent):
@@ -55,9 +59,9 @@ class ScaleControl(MapLibreComponent):
     tag = "ScaleControl"
     is_default = False
 
-    position: Var[str]
-    max_width: Var[int]
-    unit: Var[str]  # "metric" | "imperial" | "nautical"
+    position: rx.Var[str]
+    max_width: rx.Var[int]
+    unit: rx.Var[str]  # "metric" | "imperial" | "nautical"
 
 
 class AttributionControl(MapLibreComponent):
@@ -66,9 +70,9 @@ class AttributionControl(MapLibreComponent):
     tag = "AttributionControl"
     is_default = False
 
-    position: Var[str]
-    compact: Var[bool]
-    custom_attribution: Var[str | list]
+    position: rx.Var[str]
+    compact: rx.Var[bool]
+    custom_attribution: rx.Var[str | list]
 
 
 navigation_control = NavigationControl.create

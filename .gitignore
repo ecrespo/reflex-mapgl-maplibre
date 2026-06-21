@@ -6,6 +6,8 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .ruff_cache/
+.coverage
+htmlcov/
 
 # Virtual envs / uv
 .venv/
@@ -14,9 +16,11 @@ venv/
 # Reflex
 .web/
 .states/
+reflex.lock/
 *.db
 
 # Misc
 .DS_Store
 assets/external/
 .idea/
+.claude/

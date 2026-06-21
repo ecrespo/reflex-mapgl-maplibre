@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import reflex as rx
 from reflex.components.component import NoSSRComponent
-from reflex.vars import Var
 
 # Copy the local JSX bridges into the compiled frontend's public dir.
 _DECK_PATH = rx.asset("./deckgl_overlay.jsx", shared=True)
@@ -36,8 +35,8 @@ class DeckGLOverlay(NoSSRComponent):
     lib_dependencies: list[str] = [DECK_PKG]
 
     # deck.gl layer instances are constructed in the page module and passed in.
-    layers: Var[list]
-    get_tooltip: Var
+    layers: rx.Var[list]
+    get_tooltip: rx.Var
 
 
 class DrawControl(NoSSRComponent):
@@ -48,10 +47,10 @@ class DrawControl(NoSSRComponent):
     is_default = False
     lib_dependencies: list[str] = [DRAW_PKG]
 
-    position: Var[str]
-    display_controls_default: Var[bool]
-    controls: Var[dict]
-    default_mode: Var[str]
+    position: rx.Var[str]
+    display_controls_default: rx.Var[bool]
+    controls: rx.Var[dict]
+    default_mode: rx.Var[str]
 
     on_create: rx.EventHandler[rx.event.no_args_event_spec]
     on_update: rx.EventHandler[rx.event.no_args_event_spec]

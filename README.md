@@ -7,9 +7,10 @@ Python. A thin, idiomatic wrapper around
 clustering, heatmaps, controls, feature interaction and imperative camera
 control, with **no JavaScript or React required**.
 
-> Status: **early scaffold (Phase 0).** The component API and SDD artifacts are
-> in place and the demo app is structured around the upstream examples gallery.
-> See [`specs/`](specs/) for the full design.
+> Status: **beta (0.1.0).** Core map, markers/popups, sources/layers, controls,
+> multi-map provider and optional deck.gl/draw overlays are implemented, with a
+> 58-test contract suite (100% wrapper coverage) and a demo app mapped to the
+> upstream examples gallery. See [`specs/`](specs/) for the full design.
 
 ## Why
 
@@ -21,7 +22,7 @@ the upstream examples.
 ## Install
 
 ```bash
-pip install reflex-mapgl-maplibre
+uv add reflex-mapgl-maplibre      # or: pip install reflex-mapgl-maplibre
 ```
 
 It pulls the npm packages `react-map-gl` and `maplibre-gl` into the compiled
@@ -104,14 +105,47 @@ each:
 Run it:
 
 ```bash
+uv sync                       # create .venv with the wrapper + dev tools
 cd mapgl_maplibre_demo
-pip install -e ..          # install the local wrapper
-reflex init                # if needed
-reflex run
+uv run reflex run             # the local wrapper is installed in editable mode
 ```
 
 > Basemaps use key-less styles (MapLibre demotiles, CARTO). For MapTiler styles,
 > pass `map_style="https://api.maptiler.com/maps/streets/style.json?key=YOUR_KEY"`.
+
+## Development & publishing (Reflex custom component, uv)
+
+This repo follows the [Reflex custom-components](https://reflex.dev/docs/custom-components/overview/)
+layout (`custom_components/`, a demo app, and a publishable `pyproject.toml`) and
+uses **uv** as the package manager.
+
+```bash
+# 1. Set up the dev environment (creates .venv, installs the wrapper editable
+#    plus the dev group: build, twine, pytest, pytest-cov, ruff).
+uv sync
+
+# 2. Quality gates.
+uv run ruff check custom_components tests
+uv run pytest                      # 58 tests, 100% wrapper coverage
+
+# 3. Build the component (regenerates the .pyi type stubs and the dist/ artifacts:
+#    .whl + .tar.gz). `python -m reflex` keeps the repo root importable so the
+#    stub generator can resolve `custom_components.*`.
+uv run python -m reflex component build
+
+# 4. Validate the distribution metadata for PyPI.
+uv run twine check dist/*
+
+# 5. Publish (requires a PyPI account + API token; see prerequisites docs).
+uv publish                         # or: uv run twine upload dist/*
+#   TestPyPI first:  uv publish --publish-url https://test.pypi.org/legacy/
+```
+
+> `reflex component build` produces the same `dist/` artifacts; `uv build` works
+> too (both invoke the setuptools backend). The published wheel ships the `.pyi`
+> stubs and a `py.typed` marker (PEP 561) for IDE autocomplete.
+
+To list the component on the Reflex gallery after publishing: `reflex component share`.
 
 ## Project layout
 

@@ -8,7 +8,8 @@ dicts/lists.
 
 from __future__ import annotations
 
-from reflex.vars import Var
+import reflex as rx
+
 
 from .base import MapLibreComponent
 
@@ -19,19 +20,19 @@ class Source(MapLibreComponent):
     tag = "Source"
     is_default = False
 
-    id: Var[str]
-    type: Var[str]  # "geojson" | "vector" | "raster" | "image" | ...
-    data: Var[str | dict]  # GeoJSON URL or object
-    url: Var[str]
-    tiles: Var[list[str]]
-    min_zoom: Var[int]
-    max_zoom: Var[int]
+    id: rx.Var[str]
+    type: rx.Var[str]  # "geojson" | "vector" | "raster" | "image" | ...
+    data: rx.Var[str | dict]  # GeoJSON URL or object
+    url: rx.Var[str]
+    tiles: rx.Var[list[str]]
+    min_zoom: rx.Var[int]
+    max_zoom: rx.Var[int]
 
     # Clustering (geojson sources).
-    cluster: Var[bool]
-    cluster_max_zoom: Var[int]
-    cluster_radius: Var[int]
-    cluster_min_points: Var[int]
+    cluster: rx.Var[bool]
+    cluster_max_zoom: rx.Var[int]
+    cluster_radius: rx.Var[int]
+    cluster_min_points: rx.Var[int]
 
     _rename_props: dict[str, str] = {
         "min_zoom": "minzoom",
@@ -45,16 +46,16 @@ class Layer(MapLibreComponent):
     tag = "Layer"
     is_default = False
 
-    id: Var[str]
-    type: Var[str]
-    source: Var[str]
-    source_layer: Var[str]
-    paint: Var[dict]
-    layout: Var[dict]
-    filter: Var[list]
-    min_zoom: Var[int]
-    max_zoom: Var[int]
-    before_id: Var[str]
+    id: rx.Var[str]
+    type: rx.Var[str]
+    source: rx.Var[str]
+    source_layer: rx.Var[str]
+    paint: rx.Var[dict]
+    layout: rx.Var[dict]
+    filter: rx.Var[list]
+    min_zoom: rx.Var[int]
+    max_zoom: rx.Var[int]
+    before_id: rx.Var[str]
 
     _rename_props: dict[str, str] = {
         "source_layer": "source-layer",

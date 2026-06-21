@@ -25,7 +25,21 @@ dependencies = [
     "reflex>=0.9.0",
 ]
 
-classifiers = ["Development Status :: 4 - Beta"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Framework :: Reflex",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
 
 [project.urls]
 Homepage = "https://github.com/ecrespo/reflex-mapgl-maplibre"
@@ -33,14 +47,21 @@ Source = "https://github.com/ecrespo/reflex-mapgl-maplibre"
 "Bug Tracker" = "https://github.com/ecrespo/reflex-mapgl-maplibre/issues"
 "Upstream (react-map-gl)" = "https://github.com/visgl/react-map-gl"
 
+# Kept for non-uv tooling (e.g. `pip install -e ".[dev]"`).
 [project.optional-dependencies]
-dev = ["build", "twine", "pytest"]
+dev = ["build", "twine", "pytest", "pytest-cov", "ruff"]
+
+# uv-native dev tooling: installed by `uv sync` (the project uses uv).
+[dependency-groups]
+dev = ["build", "twine", "pytest", "pytest-cov", "ruff"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["custom_components"]
 
 [tool.setuptools.packages.find]
 where = ["custom_components"]
 
 [tool.setuptools.package-data]
-reflex_mapgl_maplibre = ["*.jsx"]
+# Ship the JSX bridges and the generated type stubs (PEP 561) for IDE support.
+reflex_mapgl_maplibre = ["*.jsx", "*.pyi", "py.typed"]

@@ -19,7 +19,6 @@ import json
 
 import reflex as rx
 from reflex.event import EventSpec
-from reflex.vars import Var
 
 from .base import MapLibreComponent
 
@@ -27,12 +26,12 @@ from .base import MapLibreComponent
 # --------------------------------------------------------------------------- #
 # Event specs — extract only the serializable fields apps need (DD-005).
 # --------------------------------------------------------------------------- #
-def _view_state_spec(event: Var[dict]) -> tuple[Var]:
+def _view_state_spec(event: rx.Var[dict]) -> tuple[rx.Var]:
     """Map ``onMove``/``onZoom`` → ``view_state`` dict."""
     return (event["viewState"],)
 
 
-def _mouse_spec(event: Var[dict]) -> tuple[Var, Var]:
+def _mouse_spec(event: rx.Var[dict]) -> tuple[rx.Var, rx.Var]:
     """Map mouse events → ``(lng_lat, features)``."""
     return (event["lngLat"], event["features"])
 
@@ -44,35 +43,53 @@ class Map(MapLibreComponent):
     is_default = True
 
     # --- Camera (uncontrolled) ---------------------------------------- #
-    initial_view_state: Var[dict]
+    initial_view_state: rx.Var[dict]
 
     # --- Camera (controlled) ------------------------------------------ #
-    longitude: Var[float]
-    latitude: Var[float]
-    zoom: Var[float]
-    pitch: Var[float]
-    bearing: Var[float]
+    longitude: rx.Var[float]
+    latitude: rx.Var[float]
+    zoom: rx.Var[float]
+    pitch: rx.Var[float]
+    bearing: rx.Var[float]
 
     # --- Style & limits ----------------------------------------------- #
-    map_style: Var[str | dict]
-    min_zoom: Var[float]
-    max_zoom: Var[float]
-    max_bounds: Var[list]
-    projection: Var[str | dict]
+    map_style: rx.Var[str | dict]
+    min_zoom: rx.Var[float]
+    max_zoom: rx.Var[float]
+    max_bounds: rx.Var[list]
+    projection: rx.Var[str | dict]
 
     # --- Interaction & chrome ----------------------------------------- #
-    interactive_layer_ids: Var[list[str]]
-    cursor: Var[str]
-    attribution_control: Var[bool | dict]
-    reuse_maps: Var[bool]
-    maplibre_logo: Var[bool]
-
-    # NOTE: the upstream `style` prop (container width/height) is Reflex's native
-    # `style=` — passed straight through to the React component, so it is not
-    # redeclared here (doing so collides with Reflex's Style handling).
+    interactive_layer_ids: rx.Var[list[str]]
+    cursor: rx.Var[str]
+    attribution_control: rx.Var[bool | dict]
+    reuse_maps: rx.Var[bool]
+    maplibre_logo: rx.Var[bool]
 
     # Upstream uses `mapStyle`; Reflex would emit `map_style` → rename it.
     _rename_props: dict[str, str] = {"map_style": "mapStyle"}
+
+    @classmethod
+    def create(cls, *children, **props):
+        """Forward container sizing to react-map-gl's React ``style`` prop.
+
+        react-map-gl sizes its container from a real React ``style`` prop and
+        ignores Reflex's emotion ``css`` prop. If we let Reflex handle ``style=``
+        / ``width`` / ``height`` natively (→ ``css``), react-map-gl falls back to
+        its default ``height:100%``, which collapses to 0px against an
+        auto-height parent — i.e. an invisible map. So we route the requested
+        ``style`` dict (and ``width``/``height`` shorthands) through
+        ``custom_attrs``, which Reflex emits verbatim as the ``style`` prop.
+        """
+        style: dict = dict(props.pop("style", None) or {})
+        for dim in ("width", "height"):
+            if dim in props:
+                style[dim] = props.pop(dim)
+        if style:
+            custom_attrs = dict(props.pop("custom_attrs", None) or {})
+            custom_attrs.setdefault("style", style)
+            props["custom_attrs"] = custom_attrs
+        return super().create(*children, **props)
 
     # --- Events -------------------------------------------------------- #
     on_load: rx.EventHandler[rx.event.no_args_event_spec]
