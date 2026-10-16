@@ -203,7 +203,7 @@ and on PyPI.
   regress accessibility in the wrapper.
 
 ### Compatibility
-- Python >= 3.10. Reflex >= 0.9. `react-map-gl >= 8.1`, `maplibre-gl >= 5`
+- Python >= 3.10. Reflex >= 0.9. `react-map-gl >= 8.1.3`, `maplibre-gl >= 6`
   (provided in the compiled frontend). Must work under Reflex SSR without
   hydration errors.
 
@@ -230,8 +230,8 @@ and on PyPI.
 
 | Dependency | Type | Owner | Status | Risk |
 |---|---|---|---|---|
-| `react-map-gl` (`/maplibre`) | npm (frontend runtime) | vis.gl | v8.1.1, MIT | Upstream API drift |
-| `maplibre-gl` | npm (engine + CSS) | MapLibre org | v5.x, MIT | API drift |
+| `react-map-gl` (`/maplibre`) | npm (frontend runtime) | vis.gl | v8.1.3, MIT | Upstream API drift |
+| `maplibre-gl` | npm (engine + CSS) | MapLibre org | v6.x, MIT | API drift |
 | `@deck.gl/mapbox` | npm (optional overlay) | vis.gl | optional | Heavy, optional |
 | `@mapbox/mapbox-gl-draw` | npm (optional draw) | Mapbox | optional, MIT | Optional |
 | Reflex | Python framework | Reflex Labs | >= 0.9 | Wrapping API changes |

@@ -21,6 +21,16 @@ to [Semantic Versioning](https://semver.org/).
   component build` workflow. `twine check` passes on both artifacts.
 
 ### Changed
+- **Bumped the frontend engine to MapLibre GL JS 6:** `maplibre-gl` `^5.0.0` →
+  `^6.14.0` and `react-map-gl` `^8.1.1` → `^8.1.3` (its `/maplibre` endpoint
+  loads MapLibre 6's ESM-only namespace and no longer relies on the removed
+  `map.transform`). MapLibre 6 requires WebGL2 and changes some defaults (e.g.
+  `zoomLevelsToOverscale`, nested GeoJSON properties); no wrapper prop or
+  event was removed upstream, so the Python API is unchanged. The CSS path
+  `maplibre-gl/dist/maplibre-gl.css` is unchanged.
+- Known limitation: `@deck.gl/mapbox` 9.4 still reads `map.transform` when the
+  map has terrain or when the overlay is `interleaved`; `deckgl_overlay`'s
+  default overlaid mode is unaffected.
 - Wrapper modules annotate props with `rx.Var` instead of `from reflex.vars import
   Var`, which removes a duplicate-import lint error from the generated `.pyi`
   stubs (no behavior change).

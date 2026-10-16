@@ -178,7 +178,7 @@ custom_components/reflex_mapgl_maplibre/
 
 ## 5. Compatibility & Versioning
 
-- npm: `react-map-gl@^8.1.1`, `maplibre-gl@^5`; optional `@deck.gl/mapbox`,
+- npm: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0`; optional `@deck.gl/mapbox`,
   `@mapbox/mapbox-gl-draw`.
 - Python: `reflex>=0.9`, `python>=3.10`.
 - SemVer on the package; upstream npm range documented per release; breaking

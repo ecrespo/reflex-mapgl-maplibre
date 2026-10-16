@@ -16,8 +16,8 @@ from reflex.components.component import NoSSRComponent
 
 # Pinned npm versions (see specs §"Compatibility & Versioning").
 LIBRARY = "react-map-gl/maplibre"
-MAPLIBRE_PKG = "maplibre-gl@^5.0.0"
-REACT_MAP_GL_PKG = "react-map-gl@^8.1.1"
+MAPLIBRE_PKG = "maplibre-gl@^6.14.0"
+REACT_MAP_GL_PKG = "react-map-gl@^8.1.3"
 MAPLIBRE_CSS = "maplibre-gl/dist/maplibre-gl.css"
 
 

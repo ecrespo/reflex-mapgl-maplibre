@@ -68,6 +68,12 @@ app.add_page(index)
 Optional, heavier overlays live in `reflex_mapgl_maplibre.advanced`
 (`deckgl_overlay`, `draw_control`) and pull extra npm dependencies on demand.
 
+> **deck.gl + MapLibre 6:** `deckgl_overlay` uses `MapboxOverlay` in its default
+> overlaid mode, which only reads public camera getters. `@deck.gl/mapbox` 9.4 still
+> reads the internal `map.transform` (removed in MapLibre 6) when the map has
+> 3D terrain or when `interleaved=True`, so avoid those two setups with the overlay
+> until deck.gl ships a fix.
+
 Full contract: [`specs/api/component-api-v1.md`](specs/api/component-api-v1.md).
 
 ## Imperative camera control
@@ -174,7 +180,7 @@ Tasks · Upstream Analysis (examples catalog).
 ## Compatibility
 
 - Python ≥ 3.10, Reflex ≥ 0.9
-- Frontend: `react-map-gl@^8.1.1`, `maplibre-gl@^5`
+- Frontend: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0` (ESM-only, WebGL2 required)
 
 ## License
 

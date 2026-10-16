@@ -205,7 +205,7 @@ These pull heavy optional npm deps and are **not** imported by the core package.
 
 ## 10. Versioning & compatibility
 
-- npm pins: `react-map-gl@^8.1.1`, `maplibre-gl@^5`.
+- npm pins: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0`.
 - Python: `reflex>=0.9`, `python>=3.10`.
 - The package version tracks its own SemVer; the upstream npm range is documented
   per release. Breaking upstream prop/event changes bump the wrapper minor.
