@@ -7,7 +7,7 @@ Python. A thin, idiomatic wrapper around
 clustering, heatmaps, controls, feature interaction and imperative camera
 control, with **no JavaScript or React required**.
 
-> Status: **beta (0.1.0).** Core map, markers/popups, sources/layers, controls,
+> Status: **beta (0.2.0).** Core map, markers/popups, sources/layers, controls,
 > multi-map provider and optional deck.gl/draw overlays are implemented, with a
 > 77-test contract suite (100% wrapper coverage) and a demo app mapped to the
 > upstream examples gallery. See [`specs/`](specs/) for the full design.

@@ -40,7 +40,7 @@ from .markers import Marker, Popup, marker, popup
 from .provider import MapProvider, map_provider
 from .sources import Layer, Source, layer, source
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     # factories (idiomatic, snake_case)

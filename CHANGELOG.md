@@ -6,6 +6,8 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-17
+
 ### Added
 - **MapLibre 6 / react-map-gl 8.1.3 surface:**
   - New controls `terrain_control` (`source`, `exaggeration`), `globe_control`
