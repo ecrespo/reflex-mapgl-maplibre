@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reflex-mapgl-maplibre"
-version = "0.1.0"
+version = "0.2.0"
 description = "Reflex wrapper for react-map-gl (maplibre endpoint) — interactive MapLibre GL JS maps in pure Python."
 readme = "README.md"
 license = { text = "MIT" }

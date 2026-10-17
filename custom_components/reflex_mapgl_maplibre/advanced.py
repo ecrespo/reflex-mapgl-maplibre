@@ -21,13 +21,18 @@ from reflex.components.component import NoSSRComponent
 _DECK_PATH = rx.asset("./deckgl_overlay.jsx", shared=True)
 _DRAW_PATH = rx.asset("./draw_control.jsx", shared=True)
 
-DECK_PKG = "@deck.gl/mapbox@^9.0.0"
+DECK_PKG = "@deck.gl/mapbox@^9.4.0"
 DRAW_PKG = "@mapbox/mapbox-gl-draw@^1.4.3"
 DRAW_CSS = "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css"
 
 
 class DeckGLOverlay(NoSSRComponent):
-    """deck.gl overlay rendered on top of the map (returns null in the DOM)."""
+    """deck.gl overlay rendered on top of the map (returns null in the DOM).
+
+    The bridge re-exposes the ``map.transform`` fields that ``@deck.gl/mapbox``
+    9.4 still reads and MapLibre 6 removed, so 3D terrain and ``interleaved``
+    mode work.
+    """
 
     library = f"$/public{_DECK_PATH}"
     tag = "DeckGLOverlay"
@@ -37,6 +42,9 @@ class DeckGLOverlay(NoSSRComponent):
     # deck.gl layer instances are constructed in the page module and passed in.
     layers: rx.Var[list]
     get_tooltip: rx.Var
+    # Render deck layers inside the MapLibre layer stack (shared depth buffer)
+    # instead of on a separate canvas on top.
+    interleaved: rx.Var[bool]
 
 
 class DrawControl(NoSSRComponent):

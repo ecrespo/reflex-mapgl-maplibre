@@ -8,6 +8,10 @@ concerns are handled here (see ``specs/technical/architecture.md``):
   client-only by subclassing :class:`~reflex.components.component.NoSSRComponent`.
 * **DD-004 CSS:** ``maplibre-gl/dist/maplibre-gl.css`` is injected automatically
   via :meth:`add_imports` (empty import key → side-effect stylesheet import).
+* **Worker URL (MapLibre 6):** the ESM-only engine resolves its web worker from
+  ``import.meta.url``, which breaks once Vite pre-bundles it. The root ``Map``
+  therefore passes ``workerUrl`` from Vite's ``?worker&url`` import of
+  :data:`MAPLIBRE_WORKER`, as the MapLibre v6 migration guide prescribes.
 """
 
 from __future__ import annotations
@@ -16,9 +20,10 @@ from reflex.components.component import NoSSRComponent
 
 # Pinned npm versions (see specs §"Compatibility & Versioning").
 LIBRARY = "react-map-gl/maplibre"
-MAPLIBRE_PKG = "maplibre-gl@^5.0.0"
-REACT_MAP_GL_PKG = "react-map-gl@^8.1.1"
+MAPLIBRE_PKG = "maplibre-gl@^6.14.0"
+REACT_MAP_GL_PKG = "react-map-gl@^8.1.3"
 MAPLIBRE_CSS = "maplibre-gl/dist/maplibre-gl.css"
+MAPLIBRE_WORKER = "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url"
 
 
 class MapLibreComponent(NoSSRComponent):

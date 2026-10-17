@@ -7,9 +7,9 @@ Python. A thin, idiomatic wrapper around
 clustering, heatmaps, controls, feature interaction and imperative camera
 control, with **no JavaScript or React required**.
 
-> Status: **beta (0.1.0).** Core map, markers/popups, sources/layers, controls,
+> Status: **beta (0.2.0).** Core map, markers/popups, sources/layers, controls,
 > multi-map provider and optional deck.gl/draw overlays are implemented, with a
-> 58-test contract suite (100% wrapper coverage) and a demo app mapped to the
+> 77-test contract suite (100% wrapper coverage) and a demo app mapped to the
 > upstream examples gallery. See [`specs/`](specs/) for the full design.
 
 ## Why
@@ -27,6 +27,8 @@ uv add reflex-mapgl-maplibre      # or: pip install reflex-mapgl-maplibre
 
 It pulls the npm packages `react-map-gl` and `maplibre-gl` into the compiled
 frontend automatically, and injects `maplibre-gl/dist/maplibre-gl.css` for you.
+It also hands MapLibre 6 (ESM-only) its Vite-bundled web worker through
+`worker_url`. Pass your own `worker_url=` only if you self-host the worker file.
 
 ## Quickstart
 
@@ -63,10 +65,22 @@ app.add_page(index)
 | `mapgl.fullscreen_control(...)` | `FullscreenControl` | Fullscreen toggle |
 | `mapgl.scale_control(...)` | `ScaleControl` | Scale bar |
 | `mapgl.attribution_control(...)` | `AttributionControl` | Attribution box |
+| `mapgl.terrain_control(...)` | `TerrainControl` | 3D terrain toggle (raster-dem source) |
+| `mapgl.globe_control(...)` | `GlobeControl` | Mercator ↔ globe projection toggle |
+| `mapgl.logo_control(...)` | `LogoControl` | Positionable MapLibre logo |
 | `mapgl.map_provider(...)` | `MapProvider` | Multi-map / synced maps |
 
 Optional, heavier overlays live in `reflex_mapgl_maplibre.advanced`
 (`deckgl_overlay`, `draw_control`) and pull extra npm dependencies on demand.
+
+> **deck.gl + MapLibre 6:** `@deck.gl/mapbox` 9.4 still reads the internal
+> `map.transform`, which MapLibre 6 removed. Without a fix, a map with 3D
+> terrain stops rendering in both overlaid and `interleaved=True` modes. The
+> `deckgl_overlay` bridge re-exposes the fields deck.gl needs (`elevation`,
+> `height`, `_nearZ`, `_farZ`) from MapLibre's camera, so terrain works in both
+> modes. With `interleaved=True` deck layers share MapLibre's depth buffer, so
+> layers at altitude 0 are hidden under raised terrain. Give positions a `z`, or
+> use deck.gl's `TerrainExtension` (`@deck.gl/extensions`) to drape them.
 
 Full contract: [`specs/api/component-api-v1.md`](specs/api/component-api-v1.md).
 
@@ -83,7 +97,43 @@ rx.button("Fit area", on_click=m.fit_bounds([[-10, 36], [30, 60]], padding=40))
 ```
 
 `fly_to`, `ease_to`, `jump_to`, `fit_bounds` are forwarded to the MapLibre
-`MapRef` (see Technical Design DD-003).
+`MapRef` (see Technical Design DD-003). `fit_bounds(..., absolute_padding=True)`
+uses MapLibre 6.12's persistent-padding mode.
+
+## 3D terrain, sky & globe (MapLibre 6)
+
+```python
+mapgl.map(
+    mapgl.source(id="dem", type="raster-dem", url=TERRAIN_TILEJSON, tile_size=256),
+    mapgl.terrain_control(position="top-right", source="dem", exaggeration=1.5),
+    terrain={"source": "dem", "exaggeration": 1.5},
+    sky={"sky-color": "#7dbbf0", "horizon-color": "#e6f0fa"},
+    initial_view_state={"longitude": 11.39, "latitude": 47.28, "zoom": 12, "pitch": 70},
+    map_style=STYLE,
+)
+
+mapgl.map(mapgl.globe_control(), projection="globe", map_style=STYLE)
+```
+
+## Style global state
+
+Layers can read `["global-state", "<name>"]` in `paint`, `layout` or `filter`.
+Seed the values with `global_state=` (MapLibre 6.14) and change them from Python
+with `set_global_state`. The layers update without rebuilding the style:
+
+```python
+m = mapgl.map(
+    mapgl.source(
+        mapgl.layer(id="quakes", type="circle",
+                    filter=[">=", ["get", "mag"], ["global-state", "minMag"]]),
+        id="quakes-src", type="geojson", data=EARTHQUAKES,
+    ),
+    id="main",
+    global_state={"minMag": 0},
+    map_style=STYLE,
+)
+rx.button("M4.5+", on_click=m.set_global_state("minMag", 4.5))
+```
 
 ## Examples (demo app)
 
@@ -101,6 +151,8 @@ each:
 | `/interaction` | Click features → Reflex state |
 | `/animation` | Viewport animation (`fly_to` / `fit_bounds`) |
 | `/side-by-side` | Two maps under a `MapProvider` |
+| `/terrain` | 3D terrain, hillshade, sky and `terrain_control` (MapLibre 6) |
+| `/globe` | Globe projection, `globe_control`, `logo_control` and `set_global_state` |
 
 Run it:
 
@@ -174,7 +226,7 @@ Tasks · Upstream Analysis (examples catalog).
 ## Compatibility
 
 - Python ≥ 3.10, Reflex ≥ 0.9
-- Frontend: `react-map-gl@^8.1.1`, `maplibre-gl@^5`
+- Frontend: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0` (ESM-only, WebGL2 required)
 
 ## License
 

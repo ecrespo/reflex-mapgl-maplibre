@@ -136,3 +136,93 @@ def test_imperative_helpers_require_id():
         m.fly_to(2.35, 48.85)
     with pytest.raises(ValueError):
         m.fit_bounds([[-5, 40], [10, 52]])
+
+
+# --- MapLibre 6 / react-map-gl 8.1.3 surface ------------------------------- #
+def test_map_declares_maplibre6_props():
+    props = set(mapgl.map().get_props())
+    expected = {
+        "min_pitch",
+        "max_pitch",
+        "render_world_copies",
+        "style_diffing",
+        "terrain",
+        "sky",
+        "light",
+        "terrain_skirt_length",
+        "center_clamped_to_ground",
+        "global_state",
+        "rotate_speed",
+        "pitch_speed",
+    }
+    assert expected <= props
+
+
+def test_maplibre6_props_render_camelcase():
+    m = mapgl.map(
+        terrain={"source": "dem", "exaggeration": 1.5},
+        global_state={"minMag": 3},
+        terrain_skirt_length="auto",
+        rotate_speed=0.5,
+    )
+    rendered = " ".join(m.render()["props"])
+    for name in ("terrain:", "globalState:", "terrainSkirtLength:", "rotateSpeed:"):
+        assert name in rendered, rendered
+
+
+def test_map_declares_camera_gesture_events():
+    triggers = set(mapgl.map().get_event_triggers())
+    expected = {
+        "on_drag_start",
+        "on_drag_end",
+        "on_zoom_start",
+        "on_zoom_end",
+        "on_rotate",
+        "on_rotate_end",
+        "on_pitch",
+        "on_pitch_end",
+    }
+    assert expected <= triggers
+
+
+def test_fit_bounds_absolute_padding():
+    m = mapgl.map(id="cam")
+    js = _call_script_js(m.fit_bounds([[-5, 40], [10, 52]], absolute_padding=True))
+    assert '"absolutePadding": true' in js
+
+
+def test_fit_bounds_omits_absolute_padding_by_default():
+    m = mapgl.map(id="cam")
+    js = _call_script_js(m.fit_bounds([[-5, 40], [10, 52]]))
+    assert "absolutePadding" not in js
+
+
+def test_set_global_state_emits_setter():
+    m = mapgl.map(id="cam")
+    js = _call_script_js(m.set_global_state("minMag", 4.5))
+    assert 'refs["ref_cam"]?.current?.setGlobalStateProperty("minMag", 4.5)' in js
+
+
+def test_set_global_state_requires_id():
+    with pytest.raises(ValueError):
+        mapgl.map().set_global_state("minMag", 1)
+
+
+# --- MapLibre 6 worker under Vite (ESM-only engine) ------------------------ #
+def test_map_defaults_worker_url_to_vite_bundled_worker():
+    from reflex_mapgl_maplibre.base import MAPLIBRE_WORKER
+
+    m = mapgl.map()
+    assert "workerUrl:maplibreWorkerUrl" in m.render()["props"]
+    (imp,) = m._get_all_imports()[MAPLIBRE_WORKER]
+    assert imp.tag == "maplibreWorkerUrl"
+    assert imp.is_default is True
+    assert imp.install is False
+    assert MAPLIBRE_WORKER.endswith("maplibre-gl-worker.mjs?worker&url")
+
+
+def test_map_worker_url_can_be_overridden():
+    m = mapgl.map(worker_url="/static/maplibre-gl-worker.mjs")
+    props = m.render()["props"]
+    assert any(p.startswith("workerUrl:") and "/static/" in p for p in props)
+    assert "workerUrl:maplibreWorkerUrl" not in props
