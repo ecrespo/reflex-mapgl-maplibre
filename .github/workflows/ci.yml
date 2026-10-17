@@ -14,7 +14,7 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Install from uv.lock so lint/test tools match local dev (an unpinned
       # ruff upgrade changed the default rule set and broke CI).
