@@ -181,6 +181,11 @@ custom_components/reflex_mapgl_maplibre/
 - MapLibre 6 is ESM-only and resolves its worker from `import.meta.url`, which
   points into Vite's pre-bundled deps. `Map` therefore defaults `workerUrl` to
   `maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url` (`base.MAPLIBRE_WORKER`).
+- `@deck.gl/mapbox` 9.4 still reads `map.transform`, which MapLibre 6 removed.
+  `deckgl_overlay.jsx` (`ensureDeckTransformShim`) defines a read-only
+  `map.transform` with `elevation` (`getCenterElevation()`), `height`, `_nearZ`
+  and `_farZ` (from `map._camera.transform`). It is only installed when the
+  property is absent, so MapLibre ≤ 5 is unaffected.
 - npm: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0`; optional `@deck.gl/mapbox`,
   `@mapbox/mapbox-gl-draw`.
 - Python: `reflex>=0.9`, `python>=3.10`.

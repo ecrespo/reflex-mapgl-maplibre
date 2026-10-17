@@ -16,7 +16,7 @@ from reflex.components.component import NoSSRComponent
 
 _DECK_PATH = rx.asset("./deckgl_overlay.jsx", shared=True)
 _DRAW_PATH = rx.asset("./draw_control.jsx", shared=True)
-DECK_PKG = "@deck.gl/mapbox@^9.0.0"
+DECK_PKG = "@deck.gl/mapbox@^9.4.0"
 DRAW_PKG = "@mapbox/mapbox-gl-draw@^1.4.3"
 DRAW_CSS = "@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css"
 
@@ -27,6 +27,7 @@ class DeckGLOverlay(NoSSRComponent):
         *children,
         layers: Var[list] | list | None = None,
         get_tooltip: Var | None = None,
+        interleaved: Var[bool] | bool | None = None,
         style: Sequence[Mapping[str, Any]]
         | Mapping[str, Any]
         | Var[Mapping[str, Any]]
@@ -61,6 +62,7 @@ class DeckGLOverlay(NoSSRComponent):
             *children: The children of the component.
             layers: deck.gl layer instances are constructed in the page module and passed in.
             get_tooltip: no description
+            interleaved: Render deck layers inside the MapLibre layer stack (shared depth buffer) instead of on a separate canvas on top.
             style: The style of the component.
             key: A unique key for the component.
             id: The id for the component.

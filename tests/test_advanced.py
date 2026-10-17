@@ -10,7 +10,21 @@ def test_deckgl_overlay_identity_and_deps():
     assert DeckGLOverlay.is_default is False
     assert issubclass(DeckGLOverlay, NoSSRComponent)
     assert DECK_PKG in DeckGLOverlay.lib_dependencies
-    assert {"layers", "get_tooltip"} <= set(DeckGLOverlay().get_props())
+    assert {"layers", "get_tooltip", "interleaved"} <= set(DeckGLOverlay().get_props())
+
+
+def test_deckgl_bridge_shims_maplibre6_transform():
+    """deck.gl 9.4 reads map.transform, which MapLibre 6 removed."""
+    from pathlib import Path
+
+    import reflex_mapgl_maplibre
+
+    bridge = (
+        Path(reflex_mapgl_maplibre.__file__).parent / "deckgl_overlay.jsx"
+    ).read_text()
+    assert "ensureDeckTransformShim(map.getMap())" in bridge
+    for field in ("elevation", "height", "_nearZ", "_farZ"):
+        assert f"get {field}()" in bridge
 
 
 def test_draw_control_identity_and_deps():

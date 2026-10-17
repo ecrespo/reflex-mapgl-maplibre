@@ -9,7 +9,7 @@ control, with **no JavaScript or React required**.
 
 > Status: **beta (0.1.0).** Core map, markers/popups, sources/layers, controls,
 > multi-map provider and optional deck.gl/draw overlays are implemented, with a
-> 76-test contract suite (100% wrapper coverage) and a demo app mapped to the
+> 77-test contract suite (100% wrapper coverage) and a demo app mapped to the
 > upstream examples gallery. See [`specs/`](specs/) for the full design.
 
 ## Why
@@ -73,11 +73,14 @@ app.add_page(index)
 Optional, heavier overlays live in `reflex_mapgl_maplibre.advanced`
 (`deckgl_overlay`, `draw_control`) and pull extra npm dependencies on demand.
 
-> **deck.gl + MapLibre 6:** `deckgl_overlay` uses `MapboxOverlay` in its default
-> overlaid mode, which only reads public camera getters. `@deck.gl/mapbox` 9.4 still
-> reads the internal `map.transform` (removed in MapLibre 6) when the map has
-> 3D terrain or when `interleaved=True`, so avoid those two setups with the overlay
-> until deck.gl ships a fix.
+> **deck.gl + MapLibre 6:** `@deck.gl/mapbox` 9.4 still reads the internal
+> `map.transform`, which MapLibre 6 removed. Without a fix, a map with 3D
+> terrain stops rendering in both overlaid and `interleaved=True` modes. The
+> `deckgl_overlay` bridge re-exposes the fields deck.gl needs (`elevation`,
+> `height`, `_nearZ`, `_farZ`) from MapLibre's camera, so terrain works in both
+> modes. With `interleaved=True` deck layers share MapLibre's depth buffer, so
+> layers at altitude 0 are hidden under raised terrain. Give positions a `z`, or
+> use deck.gl's `TerrainExtension` (`@deck.gl/extensions`) to drape them.
 
 Full contract: [`specs/api/component-api-v1.md`](specs/api/component-api-v1.md).
 

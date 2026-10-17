@@ -53,14 +53,20 @@ to [Semantic Versioning](https://semver.org/).
   `max_parallel_image_requests`) defaulting to Vite's
   `maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url` import, as the MapLibre
   v5→v6 migration guide requires for bundlers.
-- Known limitation: `@deck.gl/mapbox` 9.4 still reads `map.transform` when the
-  map has terrain or when the overlay is `interleaved`; `deckgl_overlay`'s
-  default overlaid mode is unaffected.
+- `deckgl_overlay` pins `@deck.gl/mapbox@^9.4.0` and exposes `interleaved`.
 - Wrapper modules annotate props with `rx.Var` instead of `from reflex.vars import
   Var`, which removes a duplicate-import lint error from the generated `.pyi`
   stubs (no behavior change).
 
 ### Fixed
+- `deckgl_overlay` on MapLibre 6 with 3D terrain: `@deck.gl/mapbox` 9.4 reads
+  the removed `map.transform` (`transform.elevation` in `getViewState`, plus
+  `height`/`_nearZ`/`_farZ` in interleaved viewports). It threw `TypeError`
+  on every frame and stopped the render loop in **both** overlaid and
+  interleaved modes, not only interleaved as first documented. The bridge now
+  installs a `map.transform` shim backed by `getCenterElevation()` and the
+  camera transform, and leaves MapLibre 5 maps untouched. Verified in Chromium
+  with MapLibre 6.14 + deck.gl 9.4 (terrain on/off, overlaid and interleaved).
 - MapLibre 6 maps no longer fail with `Worker failed to load` under Reflex's
   Vite dev server: the ESM engine looked for its worker next to Vite's
   pre-bundled `node_modules/.vite/deps` chunk (404), so no tiles were

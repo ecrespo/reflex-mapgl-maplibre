@@ -224,8 +224,11 @@ helpers reading one map's view state in `on_move` and driving the other.
 
 ## 9. Advanced module (`reflex_mapgl_maplibre.advanced`)
 
-- `deckgl_overlay(layers=..., get_tooltip=...)` — wraps a child that mounts a
-  deck.gl `MapboxOverlay` via `useControl`. Requires `@deck.gl/mapbox`.
+- `deckgl_overlay(layers=..., get_tooltip=..., interleaved=False)` — wraps a
+  child that mounts a deck.gl `MapboxOverlay` via `useControl`. Requires
+  `@deck.gl/mapbox@^9.4.0`. On MapLibre 6 the bridge shims the removed
+  `map.transform` (`elevation`, `height`, `_nearZ`, `_farZ`) that deck.gl 9.4
+  reads with terrain and in interleaved mode.
 - `draw_control(position=..., controls=..., on_create=..., on_update=...,
   on_delete=...)` — wraps `@mapbox/mapbox-gl-draw` via `useControl`.
 
