@@ -30,6 +30,9 @@ from reflex_mapgl_maplibre import (
     fullscreen_control,
     scale_control,
     attribution_control,
+    terrain_control,
+    globe_control,
+    logo_control,
     map_provider,
 )
 # Advanced (optional) modules:
@@ -61,12 +64,24 @@ Wraps `react-map-gl/maplibre` **default export** `Map`. Rendered client-only
 | `map_style` | `mapStyle` | `str \| dict` | Style URL or style JSON |
 | `min_zoom` / `max_zoom` | `minZoom` / `maxZoom` | `float` | |
 | `max_bounds` | `maxBounds` | `list` | `[[w,s],[e,n]]` |
+| `min_pitch` / `max_pitch` | `minPitch` / `maxPitch` | `float` | Defaults 0 / 85 |
+| `render_world_copies` | `renderWorldCopies` | `bool` | |
 | `projection` | `projection` | `str \| dict` | e.g. `"globe"`, `"mercator"` |
+| `style_diffing` | `styleDiffing` | `bool` | Diff style changes (default `true`) |
+| `terrain` | `terrain` | `dict` | `{source: <raster-dem id>, exaggeration}`; omit to remove |
+| `sky` | `sky` | `dict` | Sky spec (`sky-color`, `atmosphere-blend`, …) |
+| `light` | `light` | `dict` | Light spec |
+| `terrain_skirt_length` | `terrainSkirtLength` | `str` | `"auto"` \| `"none"` (MapLibre 6, init only) |
+| `center_clamped_to_ground` | `centerClampedToGround` | `bool` | Init only |
+| `global_state` | `globalState` | `dict` | Initial style global state (MapLibre 6.14, init only) |
 | `interactive_layer_ids` | `interactiveLayerIds` | `list[str]` | Layers eligible for picking |
 | `cursor` | `cursor` | `str` | CSS cursor |
 | `attribution_control` | `attributionControl` | `bool \| dict` | |
 | `reuse_maps` | `reuseMaps` | `bool` | Reuse engine instances |
 | `maplibre_logo` | `maplibreLogo` | `bool` | Show MapLibre logo |
+| `worker_url` | `workerUrl` | `str` | Defaults to the Vite `?worker&url` import of `maplibre-gl-worker.mjs` (MapLibre 6) |
+| `worker_count` / `max_parallel_image_requests` | `workerCount` / `maxParallelImageRequests` | `int` | Engine globals |
+| `rotate_speed` / `pitch_speed` | `rotateSpeed` / `pitchSpeed` | `float` | Degrees per dragged pixel (MapLibre 6.1, init only) |
 | `id` | `id` | `str` | Required for imperative helpers / multi-map |
 | `style` | `style` | `dict` | Container CSS (width/height) |
 
@@ -77,13 +92,16 @@ Wraps `react-map-gl/maplibre` **default export** `Map`. Rendered client-only
 | `on_load` | `onLoad` | `()` |
 | `on_move` | `onMove` | `view_state: dict` |
 | `on_move_end` | `onMoveEnd` | `view_state: dict` |
-| `on_zoom` | `onZoom` | `view_state: dict` |
+| `on_drag_start` / `on_drag_end` | `onDragStart` / `onDragEnd` | `view_state: dict` |
+| `on_zoom_start` / `on_zoom` / `on_zoom_end` | `onZoomStart` / `onZoom` / `onZoomEnd` | `view_state: dict` |
+| `on_rotate` / `on_rotate_end` | `onRotate` / `onRotateEnd` | `view_state: dict` |
+| `on_pitch` / `on_pitch_end` | `onPitch` / `onPitchEnd` | `view_state: dict` |
 | `on_click` | `onClick` | `(lng_lat: dict, features: list)` |
 | `on_dbl_click` | `onDblClick` | `(lng_lat, features)` |
 | `on_mouse_move` | `onMouseMove` | `(lng_lat, features)` |
 | `on_mouse_enter` | `onMouseEnter` | `(lng_lat, features)` |
 | `on_mouse_leave` | `onMouseLeave` | `()` |
-| `on_context_menu` | `onContextMenu` | `(lng_lat, features)` |
+| `on_context_menu` | `onContextMenu` | `(lng_lat, features)`; also on touch long-press (MapLibre 6.11) |
 | `on_error` | `onError` | `()` |
 
 > Mouse-event `features` is only populated for layers listed in
@@ -99,7 +117,8 @@ forwarded `MapRef` method through `refs["ref_<id>"].current`. They require `id`.
 | `m.fly_to(longitude, latitude, zoom=None, **opts)` | `MapRef.flyTo` | smooth fly |
 | `m.ease_to(longitude, latitude, zoom=None, **opts)` | `MapRef.easeTo` | eased move |
 | `m.jump_to(longitude, latitude, zoom=None, **opts)` | `MapRef.jumpTo` | instant |
-| `m.fit_bounds(bounds, padding=40, **opts)` | `MapRef.fitBounds` | `[[w,s],[e,n]]` |
+| `m.fit_bounds(bounds, padding=40, absolute_padding=None, **opts)` | `MapRef.fitBounds` | `[[w,s],[e,n]]`; `absolute_padding` → `absolutePadding` (MapLibre 6.12) |
+| `m.set_global_state(name, value)` | `MapRef.setGlobalStateProperty` | Updates layers reading `["global-state", name]` |
 
 ```python
 m = mapgl.map(id="main", initial_view_state={...}, map_style=STYLE)
@@ -148,7 +167,7 @@ Wraps named export `Source`. Holds `layer` children.
 | Python prop | Upstream | Type |
 |---|---|---|
 | `id` | `id` | `str` |
-| `type` | `type` | `str` (`geojson`,`vector`,`raster`,`image`, …) |
+| `type` | `type` | `str` (`geojson`,`vector`,`raster`,`raster-dem`,`image`, …) |
 | `data` | `data` | `str \| dict` | GeoJSON URL or object |
 | `cluster` | `cluster` | `bool` |
 | `cluster_max_zoom` | `clusterMaxZoom` | `int` |
@@ -157,6 +176,9 @@ Wraps named export `Source`. Holds `layer` children.
 | `max_zoom` | `maxzoom` | `int` |
 | `tiles` | `tiles` | `list[str]` |
 | `url` | `url` | `str` |
+| `tile_size` | `tileSize` | `int` | raster / raster-dem |
+| `encoding` | `encoding` | `str` | raster-dem: `mapbox`,`terrarium`,`custom` |
+| `attribution` | `attribution` | `str` |
 
 ## 6. `layer`
 
@@ -179,14 +201,20 @@ Wraps named export `Layer`.
 ## 7. Controls
 
 `navigation_control`, `geolocate_control`, `fullscreen_control`,
-`scale_control`, `attribution_control` wrap the matching named exports.
+`scale_control`, `attribution_control`, `terrain_control`, `globe_control` and
+`logo_control` wrap the matching named exports.
 
 Common prop: `position` → `position` (`top-left`,`top-right`,`bottom-left`,
 `bottom-right`). Extras: navigation `show_compass`/`show_zoom`/`visualize_pitch`;
-geolocate `track_user_location`/`show_user_location`/`position_options`;
-scale `max_width`/`unit` (`metric`,`imperial`,`nautical`).
+geolocate `track_user_location`/`show_user_location`/`show_accuracy_circle`/
+`position_options`/`fit_bounds_options`/`zoom_to_user_accuracy` (MapLibre 6.12);
+scale `max_width`/`unit` (`metric`,`imperial`,`nautical`); terrain `source`
+(raster-dem source id)/`exaggeration`; logo `compact`. `globe_control` toggles
+the `mercator` ↔ `globe` projection.
 
-`geolocate_control` event: `on_geolocate` → `(coords: dict)`.
+`geolocate_control` events: `on_geolocate` / `on_out_of_max_bounds` →
+`(coords: dict)`, `on_track_user_location_start` / `on_track_user_location_end`
+→ `()`.
 
 ## 8. `map_provider`
 
@@ -196,8 +224,11 @@ helpers reading one map's view state in `on_move` and driving the other.
 
 ## 9. Advanced module (`reflex_mapgl_maplibre.advanced`)
 
-- `deckgl_overlay(layers=..., get_tooltip=...)` — wraps a child that mounts a
-  deck.gl `MapboxOverlay` via `useControl`. Requires `@deck.gl/mapbox`.
+- `deckgl_overlay(layers=..., get_tooltip=..., interleaved=False)` — wraps a
+  child that mounts a deck.gl `MapboxOverlay` via `useControl`. Requires
+  `@deck.gl/mapbox@^9.4.0`. On MapLibre 6 the bridge shims the removed
+  `map.transform` (`elevation`, `height`, `_nearZ`, `_farZ`) that deck.gl 9.4
+  reads with terrain and in interleaved mode.
 - `draw_control(position=..., controls=..., on_create=..., on_update=...,
   on_delete=...)` — wraps `@mapbox/mapbox-gl-draw` via `useControl`.
 
@@ -205,7 +236,7 @@ These pull heavy optional npm deps and are **not** imported by the core package.
 
 ## 10. Versioning & compatibility
 
-- npm pins: `react-map-gl@^8.1.1`, `maplibre-gl@^5`.
+- npm pins: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0`.
 - Python: `reflex>=0.9`, `python>=3.10`.
 - The package version tracks its own SemVer; the upstream npm range is documented
   per release. Breaking upstream prop/event changes bump the wrapper minor.

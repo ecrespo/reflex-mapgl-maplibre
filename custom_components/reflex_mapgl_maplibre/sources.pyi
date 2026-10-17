@@ -24,6 +24,9 @@ class Source(MapLibreComponent):
         tiles: Var[list[str]] | list[str] | None = None,
         min_zoom: Var[int] | int | None = None,
         max_zoom: Var[int] | int | None = None,
+        attribution: Var[str] | str | None = None,
+        tile_size: Var[int] | int | None = None,
+        encoding: Var[str] | str | None = None,
         cluster: Var[bool] | bool | None = None,
         cluster_max_zoom: Var[int] | int | None = None,
         cluster_radius: Var[int] | int | None = None,
@@ -66,6 +69,9 @@ class Source(MapLibreComponent):
             tiles: no description
             min_zoom: no description
             max_zoom: no description
+            attribution: no description
+            tile_size: Raster / raster-dem tiles (terrain & hillshade).
+            encoding: no description
             cluster: Clustering (geojson sources).
             cluster_max_zoom: no description
             cluster_radius: no description

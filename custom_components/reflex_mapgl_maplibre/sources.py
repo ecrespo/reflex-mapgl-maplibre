@@ -21,12 +21,17 @@ class Source(MapLibreComponent):
     is_default = False
 
     id: rx.Var[str]
-    type: rx.Var[str]  # "geojson" | "vector" | "raster" | "image" | ...
+    type: rx.Var[str]  # "geojson" | "vector" | "raster" | "raster-dem" | "image" | ...
     data: rx.Var[str | dict]  # GeoJSON URL or object
     url: rx.Var[str]
     tiles: rx.Var[list[str]]
     min_zoom: rx.Var[int]
     max_zoom: rx.Var[int]
+    attribution: rx.Var[str]
+
+    # Raster / raster-dem tiles (terrain & hillshade).
+    tile_size: rx.Var[int]
+    encoding: rx.Var[str]  # "mapbox" | "terrarium" | "custom"
 
     # Clustering (geojson sources).
     cluster: rx.Var[bool]

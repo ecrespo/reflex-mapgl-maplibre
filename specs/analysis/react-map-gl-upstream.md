@@ -28,7 +28,7 @@ into three entry points so each map engine is typed and bundled independently:
 | Entry point | Engine | Notes |
 |---|---|---|
 | `react-map-gl/mapbox` | `mapbox-gl >= 3.5.0` | Official Mapbox types |
-| `react-map-gl/maplibre` | `maplibre-gl >= 4` (supports v5) | **Target of this project** — no Mapbox dependency needed |
+| `react-map-gl/maplibre` | `maplibre-gl >= 4` (8.1.3 works with v5 and v6) | **Target of this project** — no Mapbox dependency needed |
 | `react-map-gl/mapbox-legacy` | `mapbox-gl` v1.x / v2.x | Backwards compatibility |
 
 A dedicated standalone package, `@vis.gl/react-maplibre`, mirrors the
@@ -147,7 +147,7 @@ These map 1:1 to the demo pages this project ships (see the implementation plan)
 |---|---|
 | SSR / hydration crashes | Engine is browser-only → wrap as `NoSSRComponent`; verify with `reflex run` |
 | CSS not loaded | Always inject `maplibre-gl/dist/maplibre-gl.css` from the component |
-| API drift across v8 minors | Pin `react-map-gl@^8.1.1`, `maplibre-gl@^5`; follow CHANGELOG |
+| API drift across v8 minors | Pin `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0`; follow CHANGELOG |
 | Style key requirement | Default to key-less demotiles/CARTO styles; document MapTiler key usage |
 | `interactiveLayerIds` required for picking | Document that click/hover features only arrive for listed layers |
 

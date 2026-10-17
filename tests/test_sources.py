@@ -38,3 +38,17 @@ def test_source_holds_layer_children():
     )
     assert len(s.children) == 1
     assert s.children[0].tag == "Layer"
+
+
+def test_source_raster_dem_props_render_style_spec_names():
+    s = mapgl.source(
+        id="dem",
+        type="raster-dem",
+        url="https://example.com/tiles.json",
+        tile_size=256,
+        encoding="terrarium",
+    )
+    assert {"tile_size", "encoding", "attribution"} <= set(s.get_props())
+    rendered = " ".join(s.render()["props"])
+    assert "tileSize:" in rendered
+    assert "encoding:" in rendered
