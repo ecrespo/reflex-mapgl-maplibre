@@ -19,7 +19,7 @@ jobs:
       # Install from uv.lock so lint/test tools match local dev (an unpinned
       # ruff upgrade changed the default rule set and broke CI).
       - name: Set up uv
-        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e  # v6.8.0
+        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884  # v10.3.0
         with:
           python-version: ${{ matrix.python-version }}
 
