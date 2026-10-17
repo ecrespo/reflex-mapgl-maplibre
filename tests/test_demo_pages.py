@@ -25,7 +25,7 @@ def page_builders():
 
 
 def test_all_pages_exported(page_builders):
-    assert len(page_builders) == 9
+    assert len(page_builders) == 11
 
 
 def test_each_page_builds_a_component(page_builders):

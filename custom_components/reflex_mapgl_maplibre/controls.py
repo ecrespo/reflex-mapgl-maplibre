@@ -39,9 +39,15 @@ class GeolocateControl(MapLibreComponent):
     show_user_location: rx.Var[bool]
     show_accuracy_circle: rx.Var[bool]
     position_options: rx.Var[dict]
+    fit_bounds_options: rx.Var[dict]
+    # Zoom in line with each position's accuracy while tracking (MapLibre 6.12).
+    zoom_to_user_accuracy: rx.Var[bool]
 
     on_geolocate: rx.EventHandler[_geolocate_spec]
     on_error: rx.EventHandler[rx.event.no_args_event_spec]
+    on_out_of_max_bounds: rx.EventHandler[_geolocate_spec]
+    on_track_user_location_start: rx.EventHandler[rx.event.no_args_event_spec]
+    on_track_user_location_end: rx.EventHandler[rx.event.no_args_event_spec]
 
 
 class FullscreenControl(MapLibreComponent):
@@ -75,8 +81,41 @@ class AttributionControl(MapLibreComponent):
     custom_attribution: rx.Var[str | list]
 
 
+class TerrainControl(MapLibreComponent):
+    """A button toggling 3D terrain from a ``raster-dem`` source."""
+
+    tag = "TerrainControl"
+    is_default = False
+
+    position: rx.Var[str]
+    source: rx.Var[str]  # id of a raster-dem Source
+    exaggeration: rx.Var[float]
+
+
+class GlobeControl(MapLibreComponent):
+    """A button toggling between the ``mercator`` and ``globe`` projections."""
+
+    tag = "GlobeControl"
+    is_default = False
+
+    position: rx.Var[str]
+
+
+class LogoControl(MapLibreComponent):
+    """The MapLibre logo watermark as a positionable control."""
+
+    tag = "LogoControl"
+    is_default = False
+
+    position: rx.Var[str]
+    compact: rx.Var[bool]
+
+
 navigation_control = NavigationControl.create
 geolocate_control = GeolocateControl.create
 fullscreen_control = FullscreenControl.create
 scale_control = ScaleControl.create
 attribution_control = AttributionControl.create
+terrain_control = TerrainControl.create
+globe_control = GlobeControl.create
+logo_control = LogoControl.create

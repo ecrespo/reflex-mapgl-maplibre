@@ -17,6 +17,7 @@ LIBRARY = "react-map-gl/maplibre"
 MAPLIBRE_PKG = "maplibre-gl@^6.14.0"
 REACT_MAP_GL_PKG = "react-map-gl@^8.1.3"
 MAPLIBRE_CSS = "maplibre-gl/dist/maplibre-gl.css"
+MAPLIBRE_WORKER = "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url"
 
 class MapLibreComponent(NoSSRComponent):
     def add_imports(self) -> dict: ...

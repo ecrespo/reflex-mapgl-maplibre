@@ -13,19 +13,22 @@ from reflex_base.event import (
 )
 from reflex_base.vars.base import Var
 import reflex as rx
-from .base import MapLibreComponent
+from reflex.utils.imports import ImportVar
+from reflex.vars import VarData
+from .base import MAPLIBRE_WORKER, MapLibreComponent
+
+_WORKER_URL_VAR = rx.Var(
+    "maplibreWorkerUrl",
+    _var_data=VarData(
+        imports={
+            MAPLIBRE_WORKER: ImportVar(
+                tag="maplibreWorkerUrl", is_default=True, install=False
+            )
+        }
+    ),
+).to(str)
 
 class Map(MapLibreComponent):
-    def fly_to(
-        self, longitude: float, latitude: float, zoom: float | None = None, **options
-    ) -> EventSpec: ...
-    def ease_to(
-        self, longitude: float, latitude: float, zoom: float | None = None, **options
-    ) -> EventSpec: ...
-    def jump_to(
-        self, longitude: float, latitude: float, zoom: float | None = None, **options
-    ) -> EventSpec: ...
-    def fit_bounds(self, bounds: list, padding: int = 40, **options) -> EventSpec: ...
     @classmethod
     def create(
         cls,
@@ -40,12 +43,27 @@ class Map(MapLibreComponent):
         min_zoom: Var[float] | float | None = None,
         max_zoom: Var[float] | float | None = None,
         max_bounds: Var[list] | list | None = None,
+        min_pitch: Var[float] | float | None = None,
+        max_pitch: Var[float] | float | None = None,
+        render_world_copies: Var[bool] | bool | None = None,
         projection: Var[dict | str] | dict | str | None = None,
+        style_diffing: Var[bool] | bool | None = None,
+        terrain: Var[dict] | dict | None = None,
+        sky: Var[dict] | dict | None = None,
+        light: Var[dict] | dict | None = None,
+        terrain_skirt_length: Var[str] | str | None = None,
+        center_clamped_to_ground: Var[bool] | bool | None = None,
+        global_state: Var[dict] | dict | None = None,
         interactive_layer_ids: Var[list[str]] | list[str] | None = None,
         cursor: Var[str] | str | None = None,
         attribution_control: Var[bool | dict] | bool | dict | None = None,
         reuse_maps: Var[bool] | bool | None = None,
         maplibre_logo: Var[bool] | bool | None = None,
+        rotate_speed: Var[float] | float | None = None,
+        pitch_speed: Var[float] | float | None = None,
+        worker_url: Var[str] | str | None = None,
+        worker_count: Var[int] | int | None = None,
+        max_parallel_image_requests: Var[int] | int | None = None,
         style: Sequence[Mapping[str, Any]]
         | Mapping[str, Any]
         | Var[Mapping[str, Any]]
@@ -67,6 +85,8 @@ class Map(MapLibreComponent):
             EventType[()] | EventType[rx.Var] | EventType[rx.Var, rx.Var]
         ] = None,
         on_double_click: Optional[EventType[()] | EventType[PointerEventInfo]] = None,
+        on_drag_end: Optional[EventType[()] | EventType[rx.Var]] = None,
+        on_drag_start: Optional[EventType[()] | EventType[rx.Var]] = None,
         on_error: Optional[EventType[()]] = None,
         on_focus: Optional[EventType[()]] = None,
         on_idle: Optional[EventType[()]] = None,
@@ -86,66 +106,48 @@ class Map(MapLibreComponent):
         on_move: Optional[EventType[()] | EventType[rx.Var]] = None,
         on_move_end: Optional[EventType[()] | EventType[rx.Var]] = None,
         on_move_start: Optional[EventType[()] | EventType[rx.Var]] = None,
+        on_pitch: Optional[EventType[()] | EventType[rx.Var]] = None,
+        on_pitch_end: Optional[EventType[()] | EventType[rx.Var]] = None,
+        on_rotate: Optional[EventType[()] | EventType[rx.Var]] = None,
+        on_rotate_end: Optional[EventType[()] | EventType[rx.Var]] = None,
         on_scroll: Optional[EventType[()]] = None,
         on_scroll_end: Optional[EventType[()]] = None,
         on_unmount: Optional[EventType[()]] = None,
         on_zoom: Optional[EventType[()] | EventType[rx.Var]] = None,
+        on_zoom_end: Optional[EventType[()] | EventType[rx.Var]] = None,
+        on_zoom_start: Optional[EventType[()] | EventType[rx.Var]] = None,
         **props,
     ) -> "Map":
-        """Create the component.
+        """Default ``worker_url`` and forward sizing to the React ``style`` prop.
 
-        Args:
-            *children: The children of the component.
-            initial_view_state: --- Camera (uncontrolled) ---------------------------------------- #
-            longitude: --- Camera (controlled) ------------------------------------------ #
-            latitude: no description
-            zoom: no description
-            pitch: no description
-            bearing: no description
-            map_style: --- Style & limits ----------------------------------------------- #
-            min_zoom: no description
-            max_zoom: no description
-            max_bounds: no description
-            projection: no description
-            interactive_layer_ids: --- Interaction & chrome ----------------------------------------- #
-            cursor: no description
-            attribution_control: no description
-            reuse_maps: no description
-            maplibre_logo: no description
-            style: The style of the component.
-            key: A unique key for the component.
-            id: The id for the component.
-            ref: The Var to pass as the ref to the component.
-            class_name: The class name for the component.
-            custom_attrs: Attributes passed directly to the component.
-            on_focus: Fired when the element (or some element inside of it) receives focus. For example, it is called when the user clicks on a text input.
-            on_blur: Fired when focus has left the element (or left some element inside of it). For example, it is called when the user clicks outside of a focused text input.
-            on_click: Fired when the user clicks on an element. For example, it's called when the user clicks on a button.
-            on_context_menu: Fired when the user right-clicks on an element.
-            on_double_click: Fired when the user double-clicks on an element.
-            on_mouse_down: Fired when the user presses a mouse button on an element.
-            on_mouse_enter: Fired when the mouse pointer enters the element.
-            on_mouse_leave: Fired when the mouse pointer leaves the element.
-            on_mouse_move: Fired when the mouse pointer moves over the element.
-            on_mouse_out: Fired when the mouse pointer moves out of the element.
-            on_mouse_over: Fired when the mouse pointer moves onto the element.
-            on_mouse_up: Fired when the user releases a mouse button on an element.
-            on_scroll: Fired when the user scrolls the element.
-            on_scroll_end: Fired when scrolling ends on the element.
-            on_mount: Fired when the component is mounted to the page.
-            on_unmount: Fired when the component is removed from the page. Only called during navigation, not on page refresh.
-            on_load: --- Events -------------------------------------------------------- #
-            on_move: no description
-            on_move_start: no description
-            on_move_end: no description
-            on_zoom: no description
-            on_dbl_click: no description
-            on_error: no description
-            on_idle: no description
-            **props: The props of the component.
+        MapLibre 6 cannot locate its worker inside Vite's pre-bundled deps, so
+        unless the caller sets ``worker_url`` we pass the ``?worker&url`` import.
 
-        Returns:
-            The component."""
+        react-map-gl sizes its container from a real React ``style`` prop and
+        ignores Reflex's emotion ``css`` prop. If we let Reflex handle ``style=``
+        / ``width`` / ``height`` natively (→ ``css``), react-map-gl falls back to
+        its default ``height:100%``, which collapses to 0px against an
+        auto-height parent — i.e. an invisible map. So we route the requested
+        ``style`` dict (and ``width``/``height`` shorthands) through
+        ``custom_attrs``, which Reflex emits verbatim as the ``style`` prop."""
         ...
+
+    def fly_to(
+        self, longitude: float, latitude: float, zoom: float | None = None, **options
+    ) -> EventSpec: ...
+    def ease_to(
+        self, longitude: float, latitude: float, zoom: float | None = None, **options
+    ) -> EventSpec: ...
+    def jump_to(
+        self, longitude: float, latitude: float, zoom: float | None = None, **options
+    ) -> EventSpec: ...
+    def fit_bounds(
+        self,
+        bounds: list,
+        padding: int = 40,
+        absolute_padding: bool | None = None,
+        **options,
+    ) -> EventSpec: ...
+    def set_global_state(self, name: str, value) -> EventSpec: ...
 
 map = Map.create

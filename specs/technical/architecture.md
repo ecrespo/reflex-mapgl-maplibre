@@ -178,6 +178,9 @@ custom_components/reflex_mapgl_maplibre/
 
 ## 5. Compatibility & Versioning
 
+- MapLibre 6 is ESM-only and resolves its worker from `import.meta.url`, which
+  points into Vite's pre-bundled deps. `Map` therefore defaults `workerUrl` to
+  `maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url` (`base.MAPLIBRE_WORKER`).
 - npm: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0`; optional `@deck.gl/mapbox`,
   `@mapbox/mapbox-gl-draw`.
 - Python: `reflex>=0.9`, `python>=3.10`.

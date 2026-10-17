@@ -15,6 +15,9 @@ from reflex_mapgl_maplibre.base import LIBRARY
         (mapgl.fullscreen_control, "FullscreenControl"),
         (mapgl.scale_control, "ScaleControl"),
         (mapgl.attribution_control, "AttributionControl"),
+        (mapgl.terrain_control, "TerrainControl"),
+        (mapgl.globe_control, "GlobeControl"),
+        (mapgl.logo_control, "LogoControl"),
     ],
 )
 def test_control_identity(factory, tag):
@@ -31,6 +34,9 @@ def test_controls_accept_position():
         mapgl.fullscreen_control,
         mapgl.scale_control,
         mapgl.attribution_control,
+        mapgl.terrain_control,
+        mapgl.globe_control,
+        mapgl.logo_control,
     ):
         comp = factory(position="bottom-right")
         assert "position" in set(comp.get_props())
@@ -53,3 +59,22 @@ def test_geolocate_control_delivers_coords():
     event = Var(_js_expr="_e").to(dict)
     (coords,) = _geolocate_spec(event)
     assert "coords" in str(coords)
+
+
+def test_geolocate_control_maplibre6_props_and_events():
+    comp = mapgl.geolocate_control()
+    assert {"zoom_to_user_accuracy", "fit_bounds_options"} <= set(comp.get_props())
+    assert {
+        "on_out_of_max_bounds",
+        "on_track_user_location_start",
+        "on_track_user_location_end",
+    } <= set(comp.get_event_triggers())
+
+
+def test_terrain_control_props():
+    comp = mapgl.terrain_control(source="dem", exaggeration=1.5)
+    assert {"source", "exaggeration"} <= set(comp.get_props())
+
+
+def test_logo_control_compact():
+    assert "compact" in set(mapgl.logo_control(compact=True).get_props())

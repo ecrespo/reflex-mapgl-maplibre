@@ -13,6 +13,9 @@ STYLE_VOYAGER = "https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json"
 # Public earthquake dataset used by the cluster/heatmap demos.
 EARTHQUAKES = "https://maplibre.org/maplibre-gl-js/docs/assets/earthquakes.geojson"
 
+# Key-less raster-dem TileJSON (Alps around Innsbruck) for the terrain demo.
+TERRAIN_TILES = "https://demotiles.maplibre.org/terrain-tiles/tiles.json"
+
 MAP_BOX = {"width": "100%", "height": "70vh", "borderRadius": "12px"}
 
 # (label, route) for each example page.
@@ -26,6 +29,8 @@ EXAMPLES = [
     ("Interaction", "/interaction"),
     ("Viewport animation", "/animation"),
     ("Side-by-side", "/side-by-side"),
+    ("3D terrain & sky", "/terrain"),
+    ("Globe & global state", "/globe"),
 ]
 
 

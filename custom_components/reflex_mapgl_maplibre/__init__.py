@@ -21,13 +21,19 @@ from .controls import (
     AttributionControl,
     FullscreenControl,
     GeolocateControl,
+    GlobeControl,
+    LogoControl,
     NavigationControl,
     ScaleControl,
+    TerrainControl,
     attribution_control,
     fullscreen_control,
     geolocate_control,
+    globe_control,
+    logo_control,
     navigation_control,
     scale_control,
+    terrain_control,
 )
 from .map import Map, map
 from .markers import Marker, Popup, marker, popup
@@ -48,6 +54,9 @@ __all__ = [
     "fullscreen_control",
     "scale_control",
     "attribution_control",
+    "terrain_control",
+    "globe_control",
+    "logo_control",
     "map_provider",
     # classes (for typing / subclassing)
     "Map",
@@ -60,5 +69,8 @@ __all__ = [
     "FullscreenControl",
     "ScaleControl",
     "AttributionControl",
+    "TerrainControl",
+    "GlobeControl",
+    "LogoControl",
     "MapProvider",
 ]
