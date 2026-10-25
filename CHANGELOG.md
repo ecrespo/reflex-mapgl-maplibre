@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-24
+
+### Changed
+- **Requires Reflex ≥ 0.10** (`reflex>=0.10.0`, was `>=0.9.0`), the latest
+  Reflex release. The wrapper API is unchanged; the 77-test suite, every demo
+  page and the production export pass on Reflex 0.10.0.
+- **Requires Python ≥ 3.11** (Reflex 0.10 dropped 3.10). The 3.10 classifier and
+  CI job were removed; CI now covers Python 3.11–3.13.
+- The build backend now requires `setuptools>=78.1.1`.
+- The demo app's `requirements.txt` pins `reflex>=0.10.0`.
+- Docs: Reflex 0.10 removed the `reflex component` CLI. The README now builds
+  stubs with `reflex_base.utils.pyi_generator` and artifacts with `uv build`,
+  and documents the tag-driven PyPI release flow. Compatibility notes in the
+  README and `specs/` now say Python ≥ 3.11 / Reflex ≥ 0.10.
+
 ## [0.2.0] - 2026-10-17
 
 ### Added
