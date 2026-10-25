@@ -7,7 +7,7 @@ Python. A thin, idiomatic wrapper around
 clustering, heatmaps, controls, feature interaction and imperative camera
 control, with **no JavaScript or React required**.
 
-> Status: **beta (0.2.0).** Core map, markers/popups, sources/layers, controls,
+> Status: **beta (0.3.0).** Core map, markers/popups, sources/layers, controls,
 > multi-map provider and optional deck.gl/draw overlays are implemented, with a
 > 77-test contract suite (100% wrapper coverage) and a demo app mapped to the
 > upstream examples gallery. See [`specs/`](specs/) for the full design.
@@ -178,26 +178,37 @@ uv sync
 
 # 2. Quality gates.
 uv run ruff check custom_components tests
-uv run pytest                      # 58 tests, 100% wrapper coverage
+uv run pytest                      # 77 tests, 100% wrapper coverage
 
-# 3. Build the component (regenerates the .pyi type stubs and the dist/ artifacts:
-#    .whl + .tar.gz). `python -m reflex` keeps the repo root importable so the
-#    stub generator can resolve `custom_components.*`.
-uv run python -m reflex component build
+# 3. Regenerate the .pyi type stubs (Reflex's stub generator), then build the
+#    dist/ artifacts (.whl + .tar.gz) with the setuptools backend.
+uv run python -m reflex_base.utils.pyi_generator custom_components/reflex_mapgl_maplibre
+uv build
 
 # 4. Validate the distribution metadata for PyPI.
 uv run twine check dist/*
 
-# 5. Publish (requires a PyPI account + API token; see prerequisites docs).
+# 5. Manual publish (fallback; requires a PyPI API token).
 uv publish                         # or: uv run twine upload dist/*
 #   TestPyPI first:  uv publish --publish-url https://test.pypi.org/legacy/
 ```
 
-> `reflex component build` produces the same `dist/` artifacts; `uv build` works
-> too (both invoke the setuptools backend). The published wheel ships the `.pyi`
-> stubs and a `py.typed` marker (PEP 561) for IDE autocomplete.
+> Reflex 0.10 removed the `reflex component` CLI (`init`/`build`/`share`), so
+> stubs come from `reflex_base.utils.pyi_generator` and artifacts from `uv build`.
+> The published wheel ships the `.pyi` stubs and a `py.typed` marker (PEP 561)
+> for IDE autocomplete.
 
-To list the component on the Reflex gallery after publishing: `reflex component share`.
+### Releasing
+
+Releases are published by `.github/workflows/publish.yml` through PyPI Trusted
+Publishing (OIDC, no stored token):
+
+1. Bump `version` in `pyproject.toml`, refresh `uv.lock` (`uv lock`) and add the
+   `CHANGELOG.md` entry; merge the PR into `main` once CI is green.
+2. Tag the merge commit on `main` and push the tag:
+   `git tag -a vX.Y.Z -m "vX.Y.Z" && git push origin vX.Y.Z`.
+3. The workflow checks that the tag matches the package version, re-runs ruff
+   and pytest, builds, runs `twine check` and uploads to PyPI.
 
 ## Project layout
 
@@ -225,7 +236,7 @@ Tasks · Upstream Analysis (examples catalog).
 
 ## Compatibility
 
-- Python ≥ 3.10, Reflex ≥ 0.9
+- Python ≥ 3.11, Reflex ≥ 0.10 (tested on Reflex 0.10.0, Python 3.11–3.13)
 - Frontend: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0` (ESM-only, WebGL2 required)
 
 ## License

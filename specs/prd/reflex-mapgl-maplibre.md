@@ -119,7 +119,7 @@ and on PyPI.
 - Reimplementing MapLibre rendering — the upstream npm packages are reused as-is.
 - Maintaining Mapbox (`react-map-gl/mapbox`) wrappers — MapLibre only.
 - A bespoke theming system — styling is via MapLibre style JSON + CSS, as upstream.
-- Reflex versions < 0.9.x.
+- Reflex versions < 0.10.x.
 
 ### 5.3 Future considerations
 - Surface more events (`on_idle`, `on_style_data`) as typed `EventHandler`s.
@@ -203,7 +203,7 @@ and on PyPI.
   regress accessibility in the wrapper.
 
 ### Compatibility
-- Python >= 3.10. Reflex >= 0.9. `react-map-gl >= 8.1.3`, `maplibre-gl >= 6`
+- Python >= 3.11. Reflex >= 0.10. `react-map-gl >= 8.1.3`, `maplibre-gl >= 6`
   (provided in the compiled frontend). Must work under Reflex SSR without
   hydration errors.
 
@@ -234,7 +234,7 @@ and on PyPI.
 | `maplibre-gl` | npm (engine + CSS) | MapLibre org | v6.x, MIT | API drift |
 | `@deck.gl/mapbox` | npm (optional overlay) | vis.gl | optional | Heavy, optional |
 | `@mapbox/mapbox-gl-draw` | npm (optional draw) | Mapbox | optional, MIT | Optional |
-| Reflex | Python framework | Reflex Labs | >= 0.9 | Wrapping API changes |
+| Reflex | Python framework | Reflex Labs | >= 0.10 | Wrapping API changes |
 | PyPI | Package registry | PSF | Active | Low |
 | GitHub + gh CLI | Hosting/repos | GitHub | Active | Requires user auth |
 

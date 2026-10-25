@@ -71,7 +71,7 @@ CI ──► depends on tests + packaging
 
 ### Phase 5 — Packaging, tests & release
 1. Tests to >80% wrapper coverage; CI matrix.
-2. `reflex component build`; `uv build`; publish to PyPI.
+2. Generate stubs (`reflex_base.utils.pyi_generator`); `uv build`; publish to PyPI.
 3. README polish + examples gallery + CHANGELOG; tag v0.1.0.
 
 ## 4. Definition of Done (per item)
