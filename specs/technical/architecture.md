@@ -42,7 +42,7 @@ imperative ref — minimizing the code we maintain.
 - **Performance:** Preserve client-only dynamic loading; do not block first paint.
 - **Maintainability:** Small, typed wrappers grouped by concern; compile tests;
   pinned npm version ranges.
-- **Operability:** Reproducible build/publish with `uv` + `reflex component build`;
+- **Operability:** Reproducible build/publish with `uv` + `uv build` (stubs via Reflex's `pyi_generator`);
   CI with tests.
 
 ## 3. Proposed Architecture
@@ -72,7 +72,7 @@ imperative ref — minimizing the code we maintain.
 | `maplibre-gl` | npm / TS + CSS | WebGL engine + base stylesheet |
 | `@deck.gl/mapbox`, `@mapbox/mapbox-gl-draw` | npm (optional) | deck.gl overlay & draw control |
 | `mapgl_maplibre_demo` | Reflex app | Reproduces upstream examples |
-| Packaging | `uv` + setuptools + `reflex component build` | Build & publish |
+| Packaging | `uv` + setuptools + `uv build` (+ `reflex_base.utils.pyi_generator` stubs) | Build & publish |
 
 ### 3.3 Module layout (wrapper package)
 
@@ -175,6 +175,9 @@ custom_components/reflex_mapgl_maplibre/
 - **Decision:** Use the standard `custom_components/` publishable layout and a
   demo app, manage env/deps/lock with `uv`, keep the setuptools `pyproject.toml`.
 - **Rationale:** Combines the gallery-ready layout with reproducible tooling.
+- **Update (0.3.0):** Reflex 0.10 removed the `reflex component` CLI. Stubs are
+  generated with `python -m reflex_base.utils.pyi_generator` and artifacts with
+  `uv build`; releases go out from a `vX.Y.Z` tag via PyPI Trusted Publishing.
 
 ## 5. Compatibility & Versioning
 
@@ -188,7 +191,7 @@ custom_components/reflex_mapgl_maplibre/
   property is absent, so MapLibre ≤ 5 is unaffected.
 - npm: `react-map-gl@^8.1.3`, `maplibre-gl@^6.14.0`; optional `@deck.gl/mapbox`,
   `@mapbox/mapbox-gl-draw`.
-- Python: `reflex>=0.9`, `python>=3.10`.
+- Python: `reflex>=0.10`, `python>=3.11`.
 - SemVer on the package; upstream npm range documented per release; breaking
   upstream prop/event changes bump the wrapper minor.
 

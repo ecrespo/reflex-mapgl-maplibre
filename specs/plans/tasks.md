@@ -71,9 +71,9 @@ Priority follows the PRD (`MUST`/`SHOULD`/`COULD`).
 
 | ID | Task | Pri | Status |
 |---|---|---|---|
-| T5.1 | Wrapper test coverage > 80% | MUST | ☑ (100%, 58 tests) |
-| T5.2 | CI matrix (Python 3.10–3.13) | SHOULD | ☑ |
-| T5.3 | `reflex component build` + `uv build` artifacts | MUST | ◐ (wheel builds via `python -m build`) |
+| T5.1 | Wrapper test coverage > 80% | MUST | ☑ (100%, 77 tests) |
+| T5.2 | CI matrix (Python 3.11–3.13) | SHOULD | ☑ |
+| T5.3 | Stubs (`pyi_generator`) + `uv build` artifacts | MUST | ☑ (`reflex component` removed in Reflex 0.10) |
 | T5.4 | Publish v0.1.0 to PyPI | MUST | ☐ |
 | T5.5 | README gallery + CHANGELOG + tag `v0.1.0` | MUST | ◐ (CHANGELOG added) |
 | T5.6 | Demo: localization page | COULD | ☐ |
